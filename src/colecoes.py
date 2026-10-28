@@ -1,3 +1,4 @@
+
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 from identidade import IdSensor
@@ -17,19 +18,40 @@ class Catalogo(Generic[T]):
         self._itens: dict[IdSensor, T] = {}
 
     def inserir(self, id: IdSensor, item: T) -> bool:
-        # TODO 01: recusar duplicata e preservar o primeiro item.
-        return False
+        if id in self._itens:
+            return False
+        self._itens[id] = item
+        return True
 
     def buscar(self, id: IdSensor) -> T | None:
-        # TODO 01: consultar sem criar entrada; None indica ausência.
-        return None
+        return self._itens.get(id)
 
     def remover(self, id: IdSensor) -> bool:
-        # TODO 02: True somente quando uma entrada for removida.
-        return False
+        if id not in self._itens:
+            return False
+        del self._itens[id]
+        return True
 
     def quantidade(self):
         return len(self._itens)
 
     def ids(self):
         return set(self._itens)
+
+
+class Historico:
+    def __init__(self):
+        self._leituras: list[Medicao] = []
+
+    def registrar(self, leitura: Medicao) -> None:
+        self._leituras.append(leitura)
+
+    def quantidade(self) -> int:
+        return len(self._leituras)
+
+    def ultimas(self, limite: int) -> list[Medicao]:
+        if limite <= 0:
+            return []
+        return self._leituras[-limite:]
+
+
